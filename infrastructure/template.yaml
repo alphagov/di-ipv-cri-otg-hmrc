@@ -1141,7 +1141,168 @@ Resources:
           MetricNamespace: otg-hmrc-service
           MetricName: FailTokenGenerationMetric
 
-  # BackEnd5xxAlarms
+  VerifyFailedAccessTokenGenerationMessageCodeMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Condition: "DeployAlarms"
+    Properties:
+      LogGroupName: !Ref BearerTokenRetrievalStateMachineLogGroup #Added the log group as a placeholder
+      FilterPattern: "{ $.messageCode =* }"
+      MetricTransformations:
+        - MetricValue: "1"
+          MetricNamespace: !Sub "${AWS::StackName}/LogMessages"
+          MetricName: "VerifyAccessTokenGeneration-messageCode"
+          Dimensions:
+            - Key: MessageCode
+              Value: $.messageCode
+
+  VerifyFailedAccessTokenGenerationLowThresholdAlarm:
+    DependsOn:
+      - "VerifyFailedAccessTokenGenerationMessageCodeMetricFilter"
+    Type: AWS::CloudWatch::Alarm
+    Condition: DeployAlarms
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-VerifyFailedAccessTokenGenerationAlarm"
+      AlarmDescription: !Sub "There has been an error generatingthe acces token. ${SupportManualURL}"
+      ActionsEnabled: true
+      OKActions:
+        - !ImportValue platform-alarm-warning-alert-topic
+      AlarmActions:
+        - !ImportValue platform-alarm-warning-alert-topic
+      InsufficientDataActions: [ ]
+      Dimensions: [ ]
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      Metrics:
+        - Id: error
+          ReturnData: true
+          MetricStat:
+            Metric:
+              Namespace: !Sub "${AWS::StackName}/LogMessages"
+              MetricName: VerifyAccessTokenGeneration-messageCode
+              Dimensions:
+                - Name: MessageCode
+                  Value: EVENT_PLACEHOLDER
+            Period: 60
+            Stat: Sum
+
+  VerifyFailedAccessTokenGenerationCriticalAlarm:
+    DependsOn:
+      - "VerifyFailedAccessTokenGenerationMessageCodeMetricFilter"
+    Type: AWS::CloudWatch::Alarm
+    Condition: DeployAlarms
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-VerifyFailedAccessTokenGenerationCriticalAlarm"
+      AlarmDescription: !Sub "There has been an error Generating the Access Token. ${SupportManualURL}"
+      ActionsEnabled: true
+      OKActions:
+        - !ImportValue platform-alarm-critical-alert-topic
+      AlarmActions:
+        - !ImportValue platform-alarm-critical-alert-topic
+      InsufficientDataActions: [ ]
+      Dimensions: [ ]
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 10
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      Metrics:
+        - Id: error
+          ReturnData: true
+          MetricStat:
+            Metric:
+              Namespace: !Sub "${AWS::StackName}/LogMessages"
+              MetricName: VerifyAccessTokenGeneration-messageCode
+              Dimensions:
+                - Name: MessageCode
+                  Value: EVENT_PLACEHOLDER
+            Period: 300
+            Stat: Sum
+
+  VerifyFailedAccessTokenRetrievalMessageCodeMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Condition: "DeployAlarms"
+    Properties:
+      LogGroupName: !Ref BearerTokenRetrievalStateMachineLogGroup #Added the log group as a placeholder
+      FilterPattern: "{ $.messageCode =* }"
+      MetricTransformations:
+        - MetricValue: "1"
+          MetricNamespace: !Sub "${AWS::StackName}/LogMessages"
+          MetricName: "VerifyAccessTokenRetrieval-messageCode"
+          Dimensions:
+            - Key: MessageCode
+              Value: $.messageCode
+
+  VerifyFailedAccessTokenRetrievalLowThresholdAlarm:
+    DependsOn:
+      - "VerifyFailedAccessTokenRetrievalMessageCodeMetricFilter"
+    Type: AWS::CloudWatch::Alarm
+    Condition: DeployAlarms
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-VerifyFailedAccessTokenRetrievalAlarm"
+      AlarmDescription: !Sub "There has been an error retrieving the acces token. ${SupportManualURL}"
+      ActionsEnabled: true
+      OKActions:
+        - !ImportValue platform-alarm-warning-alert-topic
+      AlarmActions:
+        - !ImportValue platform-alarm-warning-alert-topic
+      InsufficientDataActions: [ ]
+      Dimensions: [ ]
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      Metrics:
+        - Id: error
+          ReturnData: true
+          MetricStat:
+            Metric:
+              Namespace: !Sub "${AWS::StackName}/LogMessages"
+              MetricName: VerifyAccessTokenRetrieval-messageCode
+              Dimensions:
+                - Name: MessageCode
+                  Value: EVENT_PLACEHOLDER
+            Period: 60
+            Stat: Sum
+
+  VerifyFailedAccessTokenRetrievalCriticalAlarm:
+    DependsOn:
+      - "VerifyFailedAccessTokenRetrievalMessageCodeMetricFilter"
+    Type: AWS::CloudWatch::Alarm
+    Condition: DeployAlarms
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-VerifyFailedAccessTokenRetrievalCriticalAlarm"
+      AlarmDescription: !Sub "There has been an error Retrieving the Access Token. ${SupportManualURL}"
+      ActionsEnabled: true
+      OKActions:
+        - !ImportValue platform-alarm-critical-alert-topic
+      AlarmActions:
+        - !ImportValue platform-alarm-critical-alert-topic
+      InsufficientDataActions: [ ]
+      Dimensions: [ ]
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 10
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      Metrics:
+        - Id: error
+          ReturnData: true
+          MetricStat:
+            Metric:
+              Namespace: !Sub "${AWS::StackName}/LogMessages"
+              MetricName: VerifyAccessTokenRetrieval-messageCode
+              Dimensions:
+                - Name: MessageCode
+                  Value: EVENT_PLACEHOLDER
+            Period: 300
+            Stat: Sum
+
+# BackEnd5xxAlarms
+
   5XXErrorAlarm:
     Type: AWS::CloudWatch::Alarm
     Condition: DeployAlarms
