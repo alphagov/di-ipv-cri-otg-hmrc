@@ -14,10 +14,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@aws-sdk/client-cloudformation": "3.405.0",
-    "@aws-sdk/client-dynamodb": "3.398.0",
-    "@aws-sdk/client-sfn": "3.405.0",
-    "@aws-sdk/lib-dynamodb": "3.398.0",
+    "@aws-sdk/client-cloudformation": "3.731.1",
+    "@aws-sdk/client-dynamodb": "3.731.1",
+    "@aws-sdk/client-sfn": "3.731.1",
+    "@aws-sdk/lib-dynamodb": "3.731.1",
     "testcontainers": "10.0.2"
   }
 }
